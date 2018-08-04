@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CounterReducer from './CounterReducer.js';
+import Reducer from '../reducer';
 
 class Counter extends Component {
   constructor(props){
@@ -8,32 +8,29 @@ class Counter extends Component {
       number: 0
     }
   }
-  dispatchNumber(action){
-    let number = CounterReducer(this.state.number, action)
-    this.setState({number})
+  dispatch(action){
+    let newState = Reducer(this.state, action)
+    this.setState(newState)
   }
-  decrement(){
-    this.dispatchNumber({type:'DECREMENT'})
-  }
-  increment(){
-    this.dispatchNumber({type:'INCREMENT'})
-  }
-  double(){
-    this.dispatchNumber({type:'DOUBLE'})
-  }
-  reset(){
-    this.dispatchNumber({type:'RESET'})
-  }
+  decrement = () => this.dispatch({type:'DECREMENT'})
+  increment = () => this.dispatch({type:'INCREMENT'})
+  double = () => this.dispatch({type:'DOUBLE'})
+  random = () => this.dispatch({type:'RANDOM'})
+  reset = () => this.dispatch({type:'RESET'})
+
   render(){
     return (
-     <div className="Counter">
-      <button className="reset" onClick={this.reset.bind(this)}> ! </button>
-      <button className="decrement" onClick={this.decrement.bind(this)}> - </button>
+     <div>
+      <p>Counter with Vanilla Reducer</p>
+      <button onClick={this.random}> ? </button>
+      <button onClick={this.decrement}> - </button>
       
-      <span className="number">{this.state.number}</span>
+      <span>{this.state.number}</span>
       
-      <button className="increment" onClick={this.increment.bind(this)}> + </button>
-      <button className="double" onClick={this.double.bind(this)}> x2 </button>
+      <button onClick={this.increment}> + </button>
+      <button onClick={this.double}> x2 </button>
+      <br/>
+      <button onClick={this.reset}> Reset </button>
      </div>
     )
   }

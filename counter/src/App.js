@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './App.css';
-import Counter from './counter/Counter.js'
+import Counter from './counter/Counter.js';
+import ReduxCounter from './counterRedux/App'
 
 class App extends Component {
   render() {
@@ -8,6 +8,7 @@ class App extends Component {
       <div className="App">          
         <h1 className="App-title">App Counter</h1>
         <Counter/>
+        <ReduxCounter/>
       </div>
     );
   }
