@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Calculator from './calculator';
 import CalculatorContainer from './redux-calculator';
+import Calculator2 from './calculator2';
 
 const App = () => (
   <div>
@@ -9,6 +10,8 @@ const App = () => (
     <Calculator/>
     <hr/>
     <CalculatorContainer/>
+    <hr/>
+    <Calculator2/>    
   </div>
 )
 
