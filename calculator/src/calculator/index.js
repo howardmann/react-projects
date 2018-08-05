@@ -24,12 +24,12 @@ class Calculator extends React.Component {
     let action = {
       type: this.state.fn,
       payload: {
-        a: Number(this.state.a),
-        b: Number(this.state.b)
+        a: this.state.a,
+        b: this.state.b
       }
     }
-    let result = reducer(0, action)
-    this.setState({result})
+    let newState = reducer(this.state, action)
+    this.setState(newState)
   }
   reset = () => {
     this.setState({
