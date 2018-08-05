@@ -27,6 +27,24 @@ let updateStateResult = state =>
   fn => 
     action => ({...state, result: fn(action)})
 
+let handleKeyChange = state => action => {
+  let key = Object.keys(action.payload)[0]
+  let value = action.payload[key][0]
+  return {...state, [key]: value }
+}
+
+let handleCalculate = state => action => {
+  let {fn, a, b} = action.payload
+  let newAction = {
+    type: fn,
+    payload: {
+      a, b
+    }
+  }
+  return reducer(state, newAction)
+}
+
+
 let reducer = (state = initialState, action) => {
   let updateResult = updateStateResult(state)
   return R.cond([
@@ -34,6 +52,9 @@ let reducer = (state = initialState, action) => {
     [isType('DEDUCT'), updateResult(calc(deduct))],
     [isType('MULTIPLY'), updateResult(calc(multiply))],
     [isType('DIVIDE'), updateResult(calc(divide))],
+    [isType('UPDATE'), handleKeyChange(state)],
+    [isType('RESET'), () =>  initialState],
+    [isType('CALCULATE'), handleCalculate(state)], // bit of recursion here
     [R.T, R.always(state)]
   ])(action)
 }

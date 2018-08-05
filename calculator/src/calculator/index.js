@@ -12,33 +12,30 @@ class Calculator extends React.Component {
     }
   }
   handleInputChange = (e) => {
-    // setState is async and takes cb as last arg
-    this.setState({
+    // Wrap in Promise to calc async
+    Promise.resolve(
+      this.setState({
       [e.target.name]: e.target.value
-    }, () => {
+    })).then(() => {
       this.calculate()
     })
   }
   calculate = () => {
     let action = {
-      type: this.state.fn,
+      type: 'CALCULATE',
       payload: {
+        fn: this.state.fn,
         a: this.state.a,
         b: this.state.b
       }
     }
-    let newState = reducer(this.state, action)
-    this.setState(newState)
+    this.setState(reducer(this.state, action))
   }
-  reset = () => {
-    this.setState({
-      a: "", b: "", fn: "ADD", result: ""
-    })
-  }
+  reset = () => this.setState(reducer(this.state, {type: 'RESET'}))
   render(){
     return (
       <div>
-        <p>Calculator</p>
+        <p>Calculator - Vanilla Reducer</p>
         <p>A: {this.state.a} | B: {this.state.b} | fn: {this.state.fn}</p>
         <input type="number" name="a" value={this.state.a} onChange={this.handleInputChange}/>
         <select name="fn" onChange={this.handleInputChange}>
