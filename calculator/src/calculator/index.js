@@ -1,6 +1,5 @@
 import React from 'react';
-import reducer from './reducer';
-
+import reducer from '../reducer';
 
 class Calculator extends React.Component {
   constructor(props){
