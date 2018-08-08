@@ -2,6 +2,7 @@ import React from 'react'
 import data from '../data/movies.json' // dummy data for initial State
 import Search from './search'
 import MovieList from './movieList'
+import makeHandleInputChange from '../util/handleInputChange'
 
 class Movie extends React.Component{
   constructor(props){
@@ -11,13 +12,7 @@ class Movie extends React.Component{
       search: ""
     }
   }
-  handleInputChange = (e) => {
-    let name = e.target.name
-    let value = e.target.value
-    this.setState({
-      ...this.state, [name]: value
-    })
-  }
+  handleInputChange = makeHandleInputChange(this)
   fetchMovie = (search) => {
     fetch(`http://www.omdbapi.com/?apikey=ee0200e&s=${search}`)
       .then(resp => resp.json())
@@ -34,9 +29,8 @@ class Movie extends React.Component{
     return (
       <div style={{border: '1px solid chartreuse'}}>
         <h2>Movie App</h2>
-        
-        <Search handleInputChange={this.handleInputChange} search={this.search}/>      
-
+        <p>Search for: {this.state.search}</p>
+        <Search handleInputChange={this.handleInputChange} search={this.search}/>
         <MovieList movies={this.state.data}/>
       </div>
     )
