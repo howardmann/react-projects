@@ -2,6 +2,23 @@ import React, { Component } from 'react';
 import './App.css';
 import _ from 'lodash';
 
+const Pixel = (props) => {
+  let {left, top, color} = props.pixel
+  let pixelStyle = {
+    backgroundColor: color,
+    borderRadius: '50%',
+    left: `${left}px`,
+    top: `${top}px`,
+    position: 'absolute',
+    width: '18px',
+    height: '18px',
+    transform: 'translate(-50%, -50%)'
+  }
+  return (
+    <span style={pixelStyle}></span>
+  )
+}
+
 class Canvas extends Component {
   constructor(props){
     super(props)
@@ -12,39 +29,24 @@ class Canvas extends Component {
       ]
     }
   }
-  handleClick(e){
-    let colors = ['red', 'purple', 'blue', 'orange', 'palegoldenrod', 'salmon']
-    let randomColor = _.sample(colors);
-    let pixel = {left: e.clientX, top: e.clientY, color: randomColor}
+  getColor(){
+    return _.sample(['red', 'purple', 'blue', 'orange', 'palegoldenrod', 'salmon']);
+  }
+  handleClick = (e) => {
+    let pixel = {left: e.clientX, top: e.clientY, color: this.getColor()}
     this.setState(prevState => ({
       coordinates: [...prevState.coordinates, pixel]
     }))
   }
   render(){
-    let pixelStyle = (left, top, color) => ({
-      backgroundColor: color,
-      borderRadius: '50%',
-      left: `${left}px`,
-      top: `${top}px`,
-      position: 'absolute',
-      width: '18px',
-      height: '18px',
-      transform: 'translate(-50%, -50%)'
-    })
-    let pixels = this.state.coordinates.map((pixel, i) => {
-      let {left, top, color} = pixel
-      return (
-        <span style={pixelStyle(left, top, color)}></span>
-      )
-    })
+    let pixels = this.state.coordinates.map(pixel => <Pixel pixel={pixel}/>)
     return (
-      <div onClick={this.handleClick.bind(this)} style={{background: 'gainsboro', height: '1000px'}}>
+      <div onClick={this.handleClick} style={{background: 'gainsboro', height: '1000px'}}>
         {pixels}
       </div>
     )
   }
 }
-
 
 const App = () => (
   <div>
