@@ -3,7 +3,7 @@ import PEOPLE from './people.js'
 import NameList from './NameList'
 import Search from './Search'
 import ShortList from './ShortList'
-
+import filterPeople from './util/filterPeople'
 
 class App extends Component {
   constructor(props){
@@ -23,11 +23,7 @@ class App extends Component {
   }
 
   filterPeople = () => {
-    let newPeople = this.state.data.filter(el => {
-      if (this.state.search === "") return true
-      let name = el.name.toLowerCase()
-      return name.includes(this.state.search)
-    })
+    let newPeople = filterPeople(this.state.data, this.state.search)
     this.setState({people: newPeople})
   }
 
