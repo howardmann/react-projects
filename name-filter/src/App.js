@@ -4,6 +4,7 @@ import NameList from './NameList'
 import Search from './Search'
 import ShortList from './ShortList'
 import filterPeople from './util/filterPeople'
+import addShortList from './util/addShortList'
 
 class App extends Component {
   constructor(props){
@@ -28,7 +29,7 @@ class App extends Component {
   }
 
   addShortList = (id) => {
-    let newShortList = this.state.shortList.indexOf(id) === -1 ? this.state.shortList.concat([id]) : this.state.shortList
+    let newShortList = addShortList(this.state.shortList, id)
     this.setState({shortList: newShortList})
   }
 
