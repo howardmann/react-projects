@@ -35,7 +35,11 @@ const TodoReducer = (state = initialState, action) => {
     return {...state, todos: newTodoArr}
   }
   if (action.type === 'MARK_DONE_TODO') {
+ 
     let newTodoArr = state.todos.map(t => {
+      if(t.id === action.id){
+        console.log(t);
+      }
       return t.id === action.id ? {...t, done: !t.done} : t
     })
     return {...state, todos: newTodoArr}
