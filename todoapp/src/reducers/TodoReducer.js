@@ -35,14 +35,25 @@ const TodoReducer = (state = initialState, action) => {
     return {...state, todos: newTodoArr}
   }
   if (action.type === 'MARK_DONE_TODO') {
- 
     let newTodoArr = state.todos.map(t => {
-      if(t.id === action.id){
-        console.log(t);
-      }
       return t.id === action.id ? {...t, done: !t.done} : t
     })
     return {...state, todos: newTodoArr}
+  }
+  if (action.type === 'MARK_EDIT_TODO') {
+    return {...state, editing: [...state.editing, action.id]}
+  }
+  if (action.type === 'MARK_EDIT_UNDO_TODO') {
+    return {...state, editing: state.editing.filter(id => id !== action.id)}
+  }
+  if (action.type === 'EDIT_TODO') {
+    let {id, content, done} = action
+    let todo = {id, content, done}
+    let newTodos = state.todos.map(t => {
+      return t.id === id ? todo : t
+    })
+    let newEditing = state.editing.filter(editId => editId !== id)
+    return {...state, editing: newEditing, todos: newTodos}
   }
   
   return state

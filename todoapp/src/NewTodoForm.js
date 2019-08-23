@@ -12,6 +12,7 @@ class NewTodoForm extends Component {
   }
   handleSubmit = (e) => {
     e.preventDefault()
+    if (this.state.content.trim() === '') return
     this.props.handleNewTodo(this.state.content)
     this.setState({content: ''})
   }

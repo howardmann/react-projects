@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+
+import TodoReducer from './reducers/TodoReducer'
 import NewTodoForm from './NewTodoForm'
 import TodoList from './TodoList'
-import TodoReducer from './reducers/TodoReducer'
 
 class App extends Component {
   constructor(props){
@@ -15,26 +16,16 @@ class App extends Component {
     this.dispatch({type: 'MARK_DONE_TODO', id})
   }
   handleMarkEdit = (id) => {
-    this.setState({
-      editing: [...this.state.editing, id]
-    })
+    this.dispatch({type: 'MARK_EDIT_TODO', id})
   }
   handleMarkEditUndo = (id) => {
-    let newEditing = this.state.editing.filter(editId => editId !== id)
-    this.setState({editing: newEditing})
+    this.dispatch({type: 'MARK_EDIT_UNDO_TODO', id})
   }
   handleNewTodo = (content) => {
     this.dispatch({type: 'ADD_TODO', content})
   }
-  handleEditTodo = (todo) => {
-    let newTodos = this.state.todos.map(t => {
-      return t.id === todo.id ? todo : t
-    })
-    let newEditing = this.state.editing.filter(id => id !== todo.id)
-    this.setState({
-      todos: newTodos,
-      editing: newEditing
-    })
+  handleEditTodo = ({id, content, done}) => {
+    this.dispatch({type: 'EDIT_TODO', id, content, done})
   }
   handleDeleteTodo = (id) => {
     this.dispatch({type: 'DELETE_TODO', id})
