@@ -12,12 +12,7 @@ class NewTodoForm extends Component {
   }
   handleSubmit = (e) => {
     e.preventDefault()
-    let todo = {
-      id: Math.random(),
-      content: this.state.content,
-      done: false
-    }
-    this.props.handleNewTodo(todo)
+    this.props.handleNewTodo(this.state.content)
     this.setState({content: ''})
   }
   render(){
