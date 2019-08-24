@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 
-import TodoReducer from './reducers/TodoReducer'
+import reducer from './reducers'
 import NewTodoForm from './NewTodoForm'
 import TodoList from './TodoList'
 
 class App extends Component {
   constructor(props){
     super(props)
-    this.state = TodoReducer(undefined, {})
+    this.state = reducer(undefined, {})
   }
   dispatch(action) {
-    this.setState(prevState => TodoReducer(prevState, action))
+    this.setState(prevState => reducer(prevState, action))
   }
   handleMarkDone = (id) => {
     this.dispatch({type: 'MARK_DONE_TODO', id})
@@ -30,20 +30,34 @@ class App extends Component {
   handleDeleteTodo = (id) => {
     this.dispatch({type: 'DELETE_TODO', id})
   }
+  handleFilter = (filter) => {
+    this.dispatch({type: filter})
+  }
   render() {
+    let {
+      TodoReducer: {todos, editing}, 
+      VisibilityReducer: {filter}
+    } = this.state
+    
     return (
       <div>
         <h1>TODOAPP</h1>
         <NewTodoForm handleNewTodo={this.handleNewTodo}/>
 
+        {/* Visibility Filter buttons */}
+        <button onClick={() => this.handleFilter('SHOW_ALL')}>ALL</button>
+        <button onClick={() => this.handleFilter('SHOW_DONE')}>DONE</button>
+        <button onClick={() => this.handleFilter('SHOW_NOT_DONE')}>NOT DONE</button>
+
         <TodoList 
-          todos={this.state.todos}
-          editing={this.state.editing}
+          todos={todos}
+          editing={editing}
           handleMarkDone={this.handleMarkDone}
           handleMarkEdit={this.handleMarkEdit}
           handleDeleteTodo={this.handleDeleteTodo}
           handleEditTodo={this.handleEditTodo}
           handleMarkEditUndo={this.handleMarkEditUndo}
+          filter={filter}
         />
       </div>
     );
