@@ -1,6 +1,6 @@
 import combineReducers from './combineReducers'
-import TodoReducer from './TodoReducer'
-import VisibilityReducer from './VisibilityReducer'
+import TodoReducer from './todo/TodoReducer'
+import VisibilityReducer from './visibility/VisibilityReducer'
 
 const rootReducer = combineReducers({
   todo: TodoReducer,

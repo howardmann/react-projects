@@ -1,7 +1,7 @@
 import React from 'react'
 import Todo from './Todo'
 import EditTodoForm from './EditTodoForm'
-import getVisibleTodos from './reducers/getVisibleTodos'
+import getVisibleTodos from '../reducers/getVisibleTodos'
 
 const TodoList = (props) => {
   let visibleTodos = getVisibleTodos(props.todos, props.filter)

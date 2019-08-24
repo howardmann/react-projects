@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import reducer from './reducers'
+import reducer from '../reducers/index'
 import NewTodoForm from './NewTodoForm'
 import TodoList from './TodoList'
 
