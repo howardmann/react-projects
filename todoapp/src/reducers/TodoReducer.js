@@ -28,7 +28,8 @@ const TodoReducer = (state = initialState, action) => {
       content: action.content,
       done: false
     }    
-    return {...state, todos: [...state.todos, newTodo]}
+    let newTodoArr = [newTodo].concat(state.todos)
+    return {...state, todos: newTodoArr}
   }
   if (action.type === 'DELETE_TODO') {
     let newTodoArr = state.todos.filter(t => t.id !== action.id)

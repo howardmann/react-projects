@@ -23,6 +23,7 @@ class App extends Component {
   }
   handleNewTodo = (content) => {
     this.dispatch({type: 'ADD_TODO', content})
+    this.dispatch({type: 'SHOW_ALL'})
   }
   handleEditTodo = ({id, content, done}) => {
     this.dispatch({type: 'EDIT_TODO', id, content, done})
@@ -30,24 +31,26 @@ class App extends Component {
   handleDeleteTodo = (id) => {
     this.dispatch({type: 'DELETE_TODO', id})
   }
-  handleFilter = (filter) => {
+  handleFilter = (e) => {
+    let filter = e.target.value 
     this.dispatch({type: filter})
   }
   render() {
-    let {
-      TodoReducer: {todos, editing}, 
-      VisibilityReducer: {filter}
-    } = this.state
-    
+    let {todo, visibility} = this.state
+    let {todos, editing} = todo
+    let {filter} = visibility
+
     return (
       <div>
         <h1>TODOAPP</h1>
         <NewTodoForm handleNewTodo={this.handleNewTodo}/>
-
-        {/* Visibility Filter buttons */}
-        <button onClick={() => this.handleFilter('SHOW_ALL')}>ALL</button>
-        <button onClick={() => this.handleFilter('SHOW_DONE')}>DONE</button>
-        <button onClick={() => this.handleFilter('SHOW_NOT_DONE')}>NOT DONE</button>
+        
+        {/* Visibility Filter */}
+        <select value={filter} onChange={this.handleFilter}>
+          <option value="SHOW_ALL">SHOW ALL</option>
+          <option value="SHOW_DONE">DONE</option>
+          <option value="SHOW_NOT_DONE">NOT DONE</option>
+        </select>
 
         <TodoList 
           todos={todos}

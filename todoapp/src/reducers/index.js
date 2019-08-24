@@ -3,8 +3,8 @@ import TodoReducer from './TodoReducer'
 import VisibilityReducer from './VisibilityReducer'
 
 const rootReducer = combineReducers({
-  TodoReducer,
-  VisibilityReducer
+  todo: TodoReducer,
+  visibility: VisibilityReducer
 })
 
 export default rootReducer
