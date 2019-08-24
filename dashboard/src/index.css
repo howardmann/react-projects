@@ -1,9 +1,52 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+#wrapper {
+  padding-left: 0;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
-div {
-  margin: 5px;
-  padding: 5px;
+
+#wrapper.toggled {
+  padding-left: 250px;
+}
+
+#sidebar-wrapper {
+  z-index: 1000;
+  position: fixed;
+  left: 250px;
+  width: 50px;
+  height: 100%;
+  margin-left: -250px;
+  overflow-y: auto;
+  background: palegoldenrod;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+#sidebar-wrapper > ul {
+  display: none;
+}
+
+#wrapper.toggled #sidebar-wrapper >ul {
+  display: block;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  width: 250px;
+}
+
+#page-content-wrapper {
+  background: gainsboro;
+  width: 100%;
+  position: absolute;
+  padding: 15px;
+  margin-left: 50px;
+}
+
+#wrapper.toggled #page-content-wrapper {
+  position: absolute;
+  margin-right: -250px;
+  margin-left: 0px;
 }
