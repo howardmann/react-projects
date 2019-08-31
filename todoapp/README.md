@@ -1,6 +1,6 @@
 # React & Redux: A Visual Explanation
 
-> [Click here for github repo of todoapp](https://github.com/howardmann/react-projects/tree/master/todoapp) and [here for live demo of app](mannhowietodoapp.surge.sh)
+> [Click here for github repo of todoapp](https://github.com/howardmann/react-projects/tree/master/todoapp) and [here for live demo of app](http://wwww.mannhowietodoapp.surge.sh)
 
 A visual explanation of React & Redux using the classic Todo App teaching exercise. 
 ## 1. Overview of TodoApp
