@@ -7,10 +7,15 @@ import TodoList from './TodoList'
 class App extends Component {
   constructor(props){
     super(props)
-    this.state = reducer(undefined, {})
-  }
-  dispatch(action) {
-    this.setState(prevState => reducer(prevState, action))
+    // Use prev localstorage state || initialValue
+    let state = JSON.parse(localStorage.getItem('state')) || reducer(undefined, {})    
+    this.state = state
+  }  
+  async dispatch(action) {
+    // update UI state
+    await this.setState(prevState => reducer(prevState, action))
+    // persist to localstorage
+    localStorage.setItem('state', JSON.stringify(this.state))
   }
   handleMarkDone = (id) => {
     this.dispatch({type: 'MARK_DONE_TODO', id})
@@ -44,7 +49,6 @@ class App extends Component {
       <div>
         <h1>TODOAPP</h1>
         <NewTodoForm handleNewTodo={this.handleNewTodo}/>
-        
         {/* Visibility Filter */}
         <select value={filter} onChange={this.handleFilter}>
           <option value="SHOW_ALL">SHOW ALL</option>
