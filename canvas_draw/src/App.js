@@ -9,8 +9,8 @@ class Canvas extends React.Component {
       isDrawing: false,
       lastPos: {x: 0, y: 0},
       backgroundImg: null,
-      width: 500,
-      height: 500,
+      width: this.props.width,
+      height: this.props.height,
       history: []
     }
   }
@@ -26,6 +26,9 @@ class Canvas extends React.Component {
     })
     let ctx = this.ctx()
     ctx.clearRect(0, 0, this.state.width, this.state.height)
+    if(this.state.backgroundImg){
+      this.setBackgroundImg()
+    }
   }
   componentDidMount = () => {
     // Set canvas strokes
@@ -72,7 +75,7 @@ class Canvas extends React.Component {
       history: prevState.history.concat(dataURL)
     }))
   }
-
+  
   handleColorChange = (e) => {
     let ctx = this.ctx()
     ctx.strokeStyle = e.target.value
@@ -81,7 +84,39 @@ class Canvas extends React.Component {
     })
   }
 
-  // TODO: Improve undo function
+  setBackgroundImg = () => {
+    let canvas = this.canvas()
+    let ctx = this.ctx()
+    let img = this.state.backgroundImg
+    let scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+    var x = (canvas.width / 2) - (img.width / 2) * scale;
+    var y = (canvas.height / 2) - (img.height / 2) * scale;
+    ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+  }
+
+  // FILE BACKGROUND UPLOAD
+  handleImageBackground = (e) => {
+    this.clearCanvas()
+    let reader = new FileReader()
+    reader.onload = (e) => {
+      let img = new Image()
+      img.onload = async () => {
+        // cache current background img
+        await this.setState({backgroundImg: img})
+        // update canvas background img
+        this.setBackgroundImg()
+      }
+      img.src = e.target.result
+    }
+    reader.readAsDataURL(e.target.files[0])
+  }
+
+  removeBackgroundImg = async () => {
+    await this.setState({backgroundImg: null})
+    this.clearCanvas()
+    document.getElementById('imageLoader').value = ''
+  }
+
   restore = () => {
     let ctx = this.ctx()
     let history = this.state.history
@@ -118,12 +153,14 @@ class Canvas extends React.Component {
         </select>
         <button onClick={this.clearCanvas}>Clear</button>
         <button onClick={this.undo}>Undo</button>
+        <input id="imageLoader" type="file" onChange={this.handleImageBackground}/>
+        <button onClick={this.removeBackgroundImg}>Remove Background</button>
         <br/>
         <canvas 
           // id="draw" 
           ref={canvas => this.myCanvas = canvas} // get access to this DOM element via this.myCanvas
           style={{border: '1px solid black'}} 
-          width={this.state.width} 
+          width={this.state.width}
           height={this.state.height}
           onMouseDown={this.handleMouseDown}
           onMouseMove={this.handleMouseMove}
@@ -139,7 +176,7 @@ class App extends React.Component {
     return (
       <div className="App">          
         <h1>Hi</h1>
-        <Canvas/>
+        <Canvas width={500} height={500}/>
       </div>
     );
   }
