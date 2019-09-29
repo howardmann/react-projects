@@ -15,25 +15,40 @@ class Canvas extends React.Component {
     }
   }
   canvas(){
-    return document.querySelector("#draw")
+    return this.myCanvas
   }
   ctx(){
-    return this.canvas().getContext('2d')
+    return this.myCanvas.getContext('2d')
+  }
+  clearCanvas = () => {
+    this.setState({
+      history: []
+    })
+    let ctx = this.ctx()
+    ctx.clearRect(0, 0, this.state.width, this.state.height)
   }
   componentDidMount = () => {
+    // Set canvas strokes
     const ctx = this.ctx()
+    this.clearCanvas()
     ctx.strokeStyle = this.state.color
     ctx.lineWidth = this.state.lineWidth
   }
-  handleColor = () => {
-    const ctx = this.ctx()
-    ctx.strokeStyle = this.state.color
+  handleMouseDown = (e) => {
+    // Update last position and set drawing as true
+    let { offsetX, offsetY } = e.nativeEvent
+    this.setState({
+      lastPos: { x: offsetX, y: offsetY },
+      isDrawing: true
+    })
   }
   draw = (e) => {
     const ctx = this.ctx()
     if(this.state.isDrawing){
+      // current evt position
       let {offsetX, offsetY} = e.nativeEvent
       ctx.beginPath()
+      // draw from 
       ctx.moveTo(this.state.lastPos.x, this.state.lastPos.y)
       ctx.lineTo(offsetX, offsetY)
       ctx.stroke()
@@ -42,55 +57,13 @@ class Canvas extends React.Component {
       })
     }
   }
-
-  handleMouseDown = (e) => {
-    let {offsetX, offsetY} = e.nativeEvent
-    this.setState({
-      lastPos: {x: offsetX, y: offsetY},
-      isDrawing: true
-    })
-  }
-
   handleMouseMove = (e) => {
     this.draw(e)
   }
-
-  clearCanvas = () => {
-    let ctx = this.ctx()
-    // Clears canvas
-    ctx.clearRect(0, 0, this.state.width, this.state.height)
-  }
-
-  restore = () => {
-    let ctx = this.ctx()
-    let history = this.state.history
-    let dataURL = history[history.length - 1]
-    
-    
-    let img = new Image()
-    img.onload = () => {
-      this.clearCanvas()
-      ctx.drawImage(img, 0, 0);
-    }    
-    img.src = dataURL
-    
-    
-  }
-
-  undo = () => {
-    let history = this.state.history
-    if(history.length > 1) {
-      history.pop()
-    }
-    this.setState({
-      history
-    })
-    this.restore()
-  }
-
   handleMouseUp = () => {
+    // TODO: Improve undo function
     let dataURL = this.canvas().toDataURL()
-    if (this.state.history.length > 5) {
+    if (this.state.history.length > 15) {
       this.state.history.shift()
     }
 
@@ -100,15 +73,55 @@ class Canvas extends React.Component {
     }))
   }
 
+  handleColorChange = (e) => {
+    let ctx = this.ctx()
+    ctx.strokeStyle = e.target.value
+    this.setState({
+      color: e.target.value
+    })
+  }
+
+  // TODO: Improve undo function
+  restore = () => {
+    let ctx = this.ctx()
+    let history = this.state.history
+    this.clearCanvas()
+
+    let dataURL = history[history.length - 1]
+        
+    let img = new Image()
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+    }    
+    img.src = dataURL
+  }
+
+  undo = () => {
+    let history = this.state.history
+    if(history.length >= 1) {
+      history.pop()
+    }
+    this.setState({
+      history
+    })
+    this.restore()
+  }
+
   render() {
     return (
       <div>
         <p>Last Position = x: {this.state.lastPos.x}; y: {this.state.lastPos.y}</p>
-        <button onClick={this.handleColor}>Change Color</button>
+        <select value={this.state.color} name="color" onChange={this.handleColorChange}>
+          <option value="red">Red</option>
+          <option value="blue">Blue</option>
+          <option value="pink">Pink</option>
+        </select>
+        <button onClick={this.clearCanvas}>Clear</button>
         <button onClick={this.undo}>Undo</button>
         <br/>
         <canvas 
-          id="draw" 
+          // id="draw" 
+          ref={canvas => this.myCanvas = canvas} // get access to this DOM element via this.myCanvas
           style={{border: '1px solid black'}} 
           width={this.state.width} 
           height={this.state.height}
