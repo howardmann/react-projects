@@ -36,12 +36,22 @@ class Canvas extends React.Component {
     this.clearCanvas()
     ctx.strokeStyle = this.state.color
     ctx.lineWidth = this.state.lineWidth
+
+  }
+  // Mouse events
+  getMousePos = (e) => {
+    let canvas = this.canvas()
+    let rect = canvas.getBoundingClientRect()
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    }
   }
   handleMouseDown = (e) => {
     // Update last position and set drawing as true
-    let { offsetX, offsetY } = e.nativeEvent
+    let { x, y } = this.getMousePos(e)
     this.setState({
-      lastPos: { x: offsetX, y: offsetY },
+      lastPos: { x, y },
       isDrawing: true
     })
   }
@@ -49,21 +59,22 @@ class Canvas extends React.Component {
     const ctx = this.ctx()
     if(this.state.isDrawing){
       // current evt position
-      let {offsetX, offsetY} = e.nativeEvent
+      let {x, y} = this.getMousePos(e)
       ctx.beginPath()
       // draw from 
       ctx.moveTo(this.state.lastPos.x, this.state.lastPos.y)
-      ctx.lineTo(offsetX, offsetY)
+      ctx.lineTo(x, y)
       ctx.stroke()
       this.setState({
-        lastPos: {x: offsetX, y: offsetY}
+        lastPos: {x, y}
       })
     }
   }
   handleMouseMove = (e) => {
     this.draw(e)
   }
-  handleMouseUp = () => {
+  handleMouseUp = (e) => {
+    e.preventDefault()
     // TODO: Improve undo function
     let dataURL = this.canvas().toDataURL()
     if (this.state.history.length > 15) {
@@ -74,6 +85,29 @@ class Canvas extends React.Component {
       isDrawing: false,
       history: prevState.history.concat(dataURL)
     }))
+  }
+  // Touch events
+  getTouchPos = (e) => {
+    let canvas = this.canvas()
+    let rect = canvas.getBoundingClientRect()
+    return {
+      x: e.touches[0].clientX - rect.left,
+      y: e.touches[0].clientY - rect.top
+    }
+  }
+  handleTouchStart = (e) => {
+    // workaround in react
+    e.preventDefault()    // doesnt work in react !bug
+    let touch = e.touches[0]
+    // Simulate mouseevent
+    let evt = {clientX: touch.clientX, clientY: touch.clientY}
+    this.handleMouseDown(evt)
+  }
+  handleTouchMove = (e) => {
+    e.preventDefault()    
+    let touch = e.touches[0]
+    let evt = {clientX: touch.clientX, clientY: touch.clientY}
+    this.handleMouseMove(evt)
   }
   
   handleColorChange = (e) => {
@@ -117,6 +151,15 @@ class Canvas extends React.Component {
     document.getElementById('imageLoader').value = ''
   }
 
+  // DOWNLOAD IMAGE
+  downloadImage = () => {
+    let canvas = this.canvas()
+    let image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    let link = document.createElement('a')
+    link.download = "my-image.png";
+    link.href = image
+    link.click()
+  }
   restore = () => {
     let ctx = this.ctx()
     let history = this.state.history
@@ -153,6 +196,7 @@ class Canvas extends React.Component {
         </select>
         <button onClick={this.clearCanvas}>Clear</button>
         <button onClick={this.undo}>Undo</button>
+        <button onClick={this.downloadImage}>Download</button>
         <input id="imageLoader" type="file" onChange={this.handleImageBackground}/>
         <button onClick={this.removeBackgroundImg}>Remove Background</button>
         <br/>
@@ -165,6 +209,9 @@ class Canvas extends React.Component {
           onMouseDown={this.handleMouseDown}
           onMouseMove={this.handleMouseMove}
           onMouseUp={this.handleMouseUp}
+          onTouchStart={this.handleTouchStart}
+          onTouchMove={this.handleTouchMove}
+          onTouchEnd={this.handleMouseUp}
         ></canvas>        
       </div>
     )
