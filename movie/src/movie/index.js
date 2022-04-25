@@ -1,40 +1,45 @@
-import React from 'react'
-import data from '../data/movies.json' // dummy data for initial State
+import React, {useState, useEffect} from 'react'
+import seedMovies from '../data/movies.json' // dummy data for initial State
 import Search from './search'
 import MovieList from './movieList'
-import makeHandleInputChange from '../util/handleInputChange'
 
-class Movie extends React.Component{
-  constructor(props){
-    super(props)
-    this.state = {
-      data,
-      search: ""
-    }
-  }
-  handleInputChange = makeHandleInputChange(this)
-  fetchMovie = (search) => {
-    fetch(`http://www.omdbapi.com/?apikey=ee0200e&s=${search}`)
+function Movie() {
+  let initialState = seedMovies
+  let [data, setData] = useState(initialState)
+  let [inputValue, setInputValue] = useState("Alien")
+
+  let fetchMovie = async (search) => {
+    await fetch(`http://www.omdbapi.com/?apikey=ee0200e&s=${search}`)
       .then(resp => resp.json())
       .then(resp => {
         let data = resp.Search
-        this.setState({data})
+        setData(data)
       })
   }
-  search = (e) => {
-    e.preventDefault()
-    this.fetchMovie(this.state.search)
+
+  // fetch new omdb data on load based on search term
+  useEffect(() => {
+    fetchMovie(inputValue)
+  },[])
+  
+  
+  let handleInputChange = (e) => {
+    setInputValue(e.target.value)
   }
-  render(){
-    return (
-      <div style={{border: '1px solid chartreuse'}}>
-        <h2>Movie App</h2>
-        <p>Search for: {this.state.search}</p>
-        <Search handleInputChange={this.handleInputChange} search={this.search}/>
-        <MovieList movies={this.state.data}/>
-      </div>
-    )
+
+  let searchMovie = (e) => {
+    e.preventDefault()    
+    fetchMovie(inputValue)
   }
+
+  return (
+    <div style={{border: '1px solid chartreuse'}}>
+      <h2>Movie App</h2>
+      <p>Search for: {inputValue}</p>
+      <Search handleInputChange={handleInputChange} search={searchMovie}/>
+      <MovieList movies={data}/>
+    </div>
+  );
 }
 
-export default Movie
+export default Movie;
