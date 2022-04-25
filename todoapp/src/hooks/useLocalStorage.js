@@ -14,7 +14,7 @@ export const useLocalStorage = (initialState, key) => {
 
   // udpdate localstorage whenever state is changed
   useEffect(() => {
-    localStorage.setItem('state', JSON.stringify(state))
+    localStorage.setItem(key, JSON.stringify(state))
   },[state])
 
 
