@@ -30,7 +30,7 @@ class EditTodoForm extends Component {
       <div style={{border: '1px solid blue'}}>
         <i style={{color: 'blue'}}>EditTodoForm</i>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" name="content" value={this.state.content} onChange={this.handleChange}/>
+          <input type="text" name="content" value={this.state.content} onChange={this.handleChange} onBlur={this.props.handleInputBlur} onFocus={this.props.handleInputFocus}/>
           <input type="checkbox" name="done" checked={this.state.done} onChange={this.handleChecked}/>
           <input type="submit" value="Update"/>
         </form>

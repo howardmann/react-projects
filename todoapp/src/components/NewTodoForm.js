@@ -6,7 +6,7 @@ class NewTodoForm extends Component {
     this.state = {
       content: ''
     }
-  }
+  }  
   handleChange = (e) => {
     this.setState({content: e.target.value})
   }
@@ -20,7 +20,7 @@ class NewTodoForm extends Component {
     return (
       <form onSubmit={this.handleSubmit} style={{border: '1px solid rebeccapurple'}}>
         <p><i style={{color: 'rebeccapurple'}}>NewTodoForm</i></p>
-        <input type="text" name="content" value={this.state.content} onChange={this.handleChange} placeholder="Add new todo"/>
+        <input type="text" name="content" value={this.state.content} onChange={this.handleChange} placeholder="Add new todo" onBlur={this.props.handleInputBlur} onFocus={this.props.handleInputFocus}/>
       </form>
     )
   }

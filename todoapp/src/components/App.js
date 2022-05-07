@@ -1,5 +1,6 @@
 import React from 'react';
 import {useLocalStorage} from '../hooks/useLocalStorage'
+import {useKeyPress} from '../hooks/useKeyPress'
 
 import reducer from '../reducers/index'
 import NewTodoForm from './NewTodoForm'
@@ -10,6 +11,7 @@ function App() {
   
   // custom hook useLocalStorage
   const [state, setState] = useLocalStorage(initialState, 'state')
+  
 
   // // Implementation of useLocalStorage without custom hook
   // let initialState = JSON.parse(localStorage.getItem('state')) || reducer(undefined, {})
@@ -47,6 +49,30 @@ function App() {
     let filter = e.target.value 
     dispatch({type: filter})
   }
+  // custom hook window event listener detect if key pressed, return boolean
+  const pressA = useKeyPress("a")
+  const pressD = useKeyPress('d')
+  const pressN = useKeyPress('n')
+  // detect if input is in focus
+  const [isInputFocused, setIsInputFocused] = React.useState(false)
+  let handleInputBlur = () => setIsInputFocused(false)
+  let handleInputFocus = () => setIsInputFocused(true)
+
+  // useEffect hook detect changes when input not in focus in keys above, if true dispatch filter change
+  React.useEffect(() => {
+    if (!isInputFocused) {
+      if (pressA) {
+        dispatch({type: 'SHOW_ALL'})
+      }
+      if (pressD) {
+        dispatch({type: 'SHOW_DONE'})
+      }
+      if (pressN) {
+        dispatch({type:'SHOW_NOT_DONE'})
+      }
+    }
+  },[pressA, pressD, pressN])
+
   let {todo, visibility} = state
   let {todos, editing} = todo
   let {filter} = visibility
@@ -54,8 +80,9 @@ function App() {
   return (
     <div>
       <h1>TODOAPP</h1>
-      <NewTodoForm handleNewTodo={handleNewTodo}/>
+      <NewTodoForm handleNewTodo={handleNewTodo} handleInputBlur={handleInputBlur} handleInputFocus={handleInputFocus} />
       {/* Visibility Filter */}
+      <p>Filter: <i>shortcut keys: a (all), d (done), n (not done)</i> </p>
       <select value={filter} onChange={handleFilter}>
         <option value="SHOW_ALL">SHOW ALL</option>
         <option value="SHOW_DONE">DONE</option>
@@ -71,6 +98,8 @@ function App() {
         handleEditTodo={handleEditTodo}
         handleMarkEditUndo={handleMarkEditUndo}
         filter={filter}
+        handleInputBlur={handleInputBlur} 
+        handleInputFocus={handleInputFocus}        
       />
     </div>
   );

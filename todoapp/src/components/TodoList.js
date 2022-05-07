@@ -17,6 +17,8 @@ const TodoList = (props) => {
               done={t.done}
               handleEditTodo={props.handleEditTodo}
               handleMarkEditUndo={props.handleMarkEditUndo}
+              handleInputBlur={props.handleInputBlur} 
+              handleInputFocus={props.handleInputFocus}        
             />
           : <Todo 
               key={t.id}
