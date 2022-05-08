@@ -1,29 +1,24 @@
-import React, {Component} from 'react'
+import React from 'react'
 
-class NewTodoForm extends Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      content: ''
-    }
-  }  
-  handleChange = (e) => {
-    this.setState({content: e.target.value})
+const NewTodoForm = (props) => {
+  const [content, setContent] = React.useState('')
+
+  let handleChange = (e) => {
+    setContent(e.target.value)
   }
-  handleSubmit = (e) => {
+  let handleSubmit = (e) => {
     e.preventDefault()
-    if (this.state.content.trim() === '') return
-    this.props.handleNewTodo(this.state.content)
-    this.setState({content: ''})
+    if (content.trim() === '') return
+    props.handleNewTodo(content)
+    setContent('')
   }
-  render(){
-    return (
-      <form onSubmit={this.handleSubmit} style={{border: '1px solid rebeccapurple'}}>
-        <p><i style={{color: 'rebeccapurple'}}>NewTodoForm</i></p>
-        <input type="text" name="content" value={this.state.content} onChange={this.handleChange} placeholder="Add new todo" onBlur={this.props.handleInputBlur} onFocus={this.props.handleInputFocus}/>
-      </form>
-    )
-  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{border: '1px solid rebeccapurple'}}>
+      <p><i style={{color: 'rebeccapurple'}}>NewTodoForm</i></p>
+      <input type="text" name="content" value={content} onChange={handleChange} placeholder="Add new todo" onBlur={props.handleInputBlur} onFocus={props.handleInputFocus}/>
+    </form>
+  )
 }
 
 export default NewTodoForm
