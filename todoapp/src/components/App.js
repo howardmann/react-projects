@@ -1,10 +1,12 @@
 import React from 'react';
 import {useLocalStorage} from '../hooks/useLocalStorage'
-import {useKeyPress} from '../hooks/useKeyPress'
+import {useFilterKeyPress} from '../hooks/useFilterKeyPress'
+import ContextInput from '../context/contextInput'
 
 import reducer from '../reducers/index'
 import NewTodoForm from './NewTodoForm'
 import TodoList from './TodoList'
+import Filter from './Filter'
 
 function App() {
   let initialState = reducer(undefined, {})
@@ -12,20 +14,12 @@ function App() {
   // custom hook useLocalStorage
   const [state, setState] = useLocalStorage(initialState, 'state')
   
-
-  // // Implementation of useLocalStorage without custom hook
-  // let initialState = JSON.parse(localStorage.getItem('state')) || reducer(undefined, {})
-  // const [state, setState] = useState(initialState)
-  // // side effect update localstorage for state when state changes
-  // useEffect(() => {
-  //   localStorage.setItem('state', JSON.stringify(state))
-  // },[state])
-
   // reducer implementation of dispatch
   const dispatch = (action) => {
     setState(prevState => reducer(prevState, action))
   }
   
+  // State handlers
   let handleMarkDone = (id) => {
     dispatch({type: 'MARK_DONE_TODO', id})
   }
@@ -49,58 +43,37 @@ function App() {
     let filter = e.target.value 
     dispatch({type: filter})
   }
-  // custom hook window event listener detect if key pressed, return boolean
-  const pressA = useKeyPress("a")
-  const pressD = useKeyPress('d')
-  const pressN = useKeyPress('n')
-  // detect if input is in focus
-  const [isInputFocused, setIsInputFocused] = React.useState(false)
-  let handleInputBlur = () => setIsInputFocused(false)
-  let handleInputFocus = () => setIsInputFocused(true)
 
-  // useEffect hook detect changes when input not in focus in keys above, if true dispatch filter change
-  React.useEffect(() => {
-    if (!isInputFocused) {
-      if (pressA) {
-        dispatch({type: 'SHOW_ALL'})
-      }
-      if (pressD) {
-        dispatch({type: 'SHOW_DONE'})
-      }
-      if (pressN) {
-        dispatch({type:'SHOW_NOT_DONE'})
-      }
-    }
-  },[pressA, pressD, pressN])
-
+  // State values from reducers
   let {todo, visibility} = state
   let {todos, editing} = todo
   let {filter} = visibility
 
+  // Custom hook to filter shortcut keypress
+  const [isInputFocused, setIsInputFocused] = useFilterKeyPress(dispatch)
+
   return (
     <div>
       <h1>TODOAPP</h1>
-      <NewTodoForm handleNewTodo={handleNewTodo} handleInputBlur={handleInputBlur} handleInputFocus={handleInputFocus} />
-      {/* Visibility Filter */}
-      <p>Filter: <i>shortcut keys: a (all), d (done), n (not done)</i> </p>
-      <select value={filter} onChange={handleFilter}>
-        <option value="SHOW_ALL">SHOW ALL</option>
-        <option value="SHOW_DONE">DONE</option>
-        <option value="SHOW_NOT_DONE">NOT DONE</option>
-      </select>
 
-      <TodoList 
-        todos={todos}
-        editing={editing}
-        handleMarkDone={handleMarkDone}
-        handleMarkEdit={handleMarkEdit}
-        handleDeleteTodo={handleDeleteTodo}
-        handleEditTodo={handleEditTodo}
-        handleMarkEditUndo={handleMarkEditUndo}
-        filter={filter}
-        handleInputBlur={handleInputBlur} 
-        handleInputFocus={handleInputFocus}        
-      />
+      {/* Using React Context for sharing global isInputFocused variable to detect if any text input is focus */}
+      <ContextInput.Provider value={[isInputFocused, setIsInputFocused]}>
+        <NewTodoForm handleNewTodo={handleNewTodo} />
+
+        <Filter filter={filter} handleFilter={handleFilter}/>
+
+        <TodoList 
+          todos={todos}
+          editing={editing}
+          handleMarkDone={handleMarkDone}
+          handleMarkEdit={handleMarkEdit}
+          handleDeleteTodo={handleDeleteTodo}
+          handleEditTodo={handleEditTodo}
+          handleMarkEditUndo={handleMarkEditUndo}
+          filter={filter}
+        />
+        
+      </ContextInput.Provider>
     </div>
   );
   

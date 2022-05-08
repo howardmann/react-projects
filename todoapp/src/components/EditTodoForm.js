@@ -1,43 +1,38 @@
-import React, {Component} from 'react'
+import React from 'react'
+import ContextInput from '../context/contextInput'
 
-class EditTodoForm extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      content: this.props.content,
-      done: this.props.done
-    }
+const EditTodoForm = (props) => {
+  const [content, setContent] = React.useState(props.content)
+  const [done, setDone] = React.useState(props.done)
+  const [,setIsInputFocused] = React.useContext(ContextInput)
+
+  let handleChange = (e) => {
+    setContent(e.target.value)
   }
-  handleChange = (e) => {
-    this.setState({content: e.target.value})
+  let handleChecked = (e) => {
+    setDone(!done)
   }
-  handleChecked = (e) => {
-    this.setState({
-      done: !this.state.done
-    })
-  }
-  handleSubmit = (e) => {
+  let handleSubmit = (e) => {
     e.preventDefault()
-    
-    this.props.handleEditTodo({
-      id: this.props.id,
-      content: this.state.content,
-      done: this.state.done
+
+    props.handleEditTodo({
+      id: props.id,
+      content: content,
+      done: done
     })
   }
-  render(){
-    return (
-      <div style={{border: '1px solid blue'}}>
-        <i style={{color: 'blue'}}>EditTodoForm</i>
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" name="content" value={this.state.content} onChange={this.handleChange} onBlur={this.props.handleInputBlur} onFocus={this.props.handleInputFocus}/>
-          <input type="checkbox" name="done" checked={this.state.done} onChange={this.handleChecked}/>
-          <input type="submit" value="Update"/>
-        </form>
-        <button onClick={() => this.props.handleMarkEditUndo(this.props.id)}>Undo Edit</button>
-      </div>
-    )
-  }
+  return (
+    <div style={{border: '1px solid blue'}}>
+      <i style={{color: 'blue'}}>EditTodoForm</i>
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="content" value={content} onChange={handleChange} onBlur={() => setIsInputFocused(false)} onFocus={() => setIsInputFocused(true)} />
+        <input type="checkbox" name="done" checked={done} onChange={handleChecked}/>
+        <input type="submit" value="Update"/>
+      </form>
+      <button onClick={() => props.handleMarkEditUndo(props.id)}>Undo Edit</button>
+    </div>
+
+  )
 }
 
 export default EditTodoForm
